@@ -1,0 +1,25 @@
+{
+  "name": "angular-lab-2019_hw-1",
+  "version": "1.0.0",
+  "description": "Homework",
+  "main": "index.js",
+  "scripts": {
+    "node": "node index.js",
+    "tsc": "npx tsc index.ts",
+    "result": "npm run tsc && npm run node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TigranKirakosov/angular-lab-2019_hw-1.git"
+  },
+  "keywords": [
+    "typescript",
+    "ES6"
+  ],
+  "author": "Tigran Kirakosov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TigranKirakosov/angular-lab-2019_hw-1/issues"
+  },
+  "homepage": "https://github.com/TigranKirakosov/angular-lab-2019_hw-1#readme"
+}
