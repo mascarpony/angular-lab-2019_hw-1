@@ -73,6 +73,10 @@ var Food = (function () {
             this.fullFoodName = (this.foodName || '[Choose item]') + " with " + (this
                 .stuffing || '[Choose item]') + " of " + (this.size || '[Choose item]') + " size";
         }
+        else if (typeof this.stuffing == 'string') {
+            this.fullFoodName = (this.foodName || '[Choose item]') + " of type " + (this
+                .stuffing || '[Choose item]');
+        }
         else if (typeof this.size == 'number') {
             this.fullFoodName = (this.foodName || '[Choose item]') + " of type " + (this.stuffing || '[Choose item]') + ". " + (this.size || '[Choose amount]') + " gramms.";
         }
@@ -103,15 +107,6 @@ var Burger = (function (_super) {
     __extends(Burger, _super);
     function Burger() {
         _super.apply(this, arguments);
-        this.HAMBURGER_SIZES = {
-            SMALL: { TYPE: 'Small', COST: 50, CALORIES: 20 },
-            BIG: { TYPE: 'Big', COST: 100, CALORIES: 40 }
-        };
-        this.HAMBURGER_STUFFING = {
-            CHEESE: { TYPE: 'Cheese', COST: 10, CALORIES: 20 },
-            SALAD: { TYPE: 'Salad', COST: 20, CALORIES: 5 },
-            POTATO: { TYPE: 'Potato', COST: 15, CALORIES: 10 }
-        };
     }
     Burger.prototype.calculateCost = function () {
         this.cost = this.sizeValues.COST + this.stuffingValues.COST;
@@ -125,11 +120,11 @@ var Burger = (function (_super) {
         }
         _super.prototype.chooseSize.call(this, type);
         switch (this.size) {
-            case this.HAMBURGER_SIZES.SMALL.TYPE:
-                this.sizeValues = this.HAMBURGER_SIZES.SMALL;
+            case Burger.HAMBURGER_SIZES.SMALL.TYPE:
+                this.sizeValues = Burger.HAMBURGER_SIZES.SMALL;
                 break;
-            case this.HAMBURGER_SIZES.BIG.TYPE:
-                this.sizeValues = this.HAMBURGER_SIZES.BIG;
+            case Burger.HAMBURGER_SIZES.BIG.TYPE:
+                this.sizeValues = Burger.HAMBURGER_SIZES.BIG;
                 break;
             default:
                 console.log("Sorry, we have no such sizes.");
@@ -144,14 +139,14 @@ var Burger = (function (_super) {
         }
         _super.prototype.chooseStuffing.call(this, type);
         switch (this.stuffing) {
-            case this.HAMBURGER_STUFFING.CHEESE.TYPE:
-                this.stuffingValues = this.HAMBURGER_STUFFING.CHEESE;
+            case Burger.HAMBURGER_STUFFING.CHEESE.TYPE:
+                this.stuffingValues = Burger.HAMBURGER_STUFFING.CHEESE;
                 break;
-            case this.HAMBURGER_STUFFING.POTATO.TYPE:
-                this.stuffingValues = this.HAMBURGER_STUFFING.POTATO;
+            case Burger.HAMBURGER_STUFFING.POTATO.TYPE:
+                this.stuffingValues = Burger.HAMBURGER_STUFFING.POTATO;
                 break;
-            case this.HAMBURGER_STUFFING.SALAD.TYPE:
-                this.stuffingValues = this.HAMBURGER_STUFFING.SALAD;
+            case Burger.HAMBURGER_STUFFING.SALAD.TYPE:
+                this.stuffingValues = Burger.HAMBURGER_STUFFING.SALAD;
                 break;
             default:
                 console.log("Sorry, we have no such stuffing.");
@@ -160,6 +155,15 @@ var Burger = (function (_super) {
         this.calculateCost();
         this.calculateCalories();
     };
+    Burger.HAMBURGER_SIZES = {
+        SMALL: { TYPE: 'Small', COST: 50, CALORIES: 20 },
+        BIG: { TYPE: 'Big', COST: 100, CALORIES: 40 }
+    };
+    Burger.HAMBURGER_STUFFING = {
+        CHEESE: { TYPE: 'Cheese', COST: 10, CALORIES: 20 },
+        SALAD: { TYPE: 'Salad', COST: 20, CALORIES: 5 },
+        POTATO: { TYPE: 'Potato', COST: 15, CALORIES: 10 }
+    };
     return Burger;
 })(Food);
 // To-Do
@@ -167,10 +171,6 @@ var Salad = (function (_super) {
     __extends(Salad, _super);
     function Salad(foodName) {
         _super.call(this, foodName);
-        this.SALAD_TYPES = {
-            CAESAR: { TYPE: 'Caesar', COST: 100, CALORIES: 20 },
-            OLIVIER: { TYPE: 'Olivier', COST: 50, CALORIES: 80 }
-        };
         this.size = 0;
     }
     Salad.prototype.calculateCost = function (grammAmount) {
@@ -185,11 +185,11 @@ var Salad = (function (_super) {
         }
         _super.prototype.chooseStuffing.call(this, salad);
         switch (this.stuffing) {
-            case this.SALAD_TYPES.CAESAR.TYPE:
-                this.stuffingValues = this.SALAD_TYPES.CAESAR;
+            case Salad.SALAD_TYPES.CAESAR.TYPE:
+                this.stuffingValues = Salad.SALAD_TYPES.CAESAR;
                 break;
-            case this.SALAD_TYPES.OLIVIER.TYPE:
-                this.stuffingValues = this.SALAD_TYPES.OLIVIER;
+            case Salad.SALAD_TYPES.OLIVIER.TYPE:
+                this.stuffingValues = Salad.SALAD_TYPES.OLIVIER;
                 break;
             default:
                 console.log("Sorry, we have no such stuffing.");
@@ -203,6 +203,10 @@ var Salad = (function (_super) {
         this.calculateCost(grammAmount);
         this.calculateCalories(grammAmount);
     };
+    Salad.SALAD_TYPES = {
+        CAESAR: { TYPE: 'Caesar', COST: 100, CALORIES: 20 },
+        OLIVIER: { TYPE: 'Olivier', COST: 50, CALORIES: 80 }
+    };
     return Salad;
 })(Food);
 var Drink = (function (_super) {
@@ -210,6 +214,35 @@ var Drink = (function (_super) {
     function Drink() {
         _super.apply(this, arguments);
     }
+    Drink.prototype.calculateCost = function () {
+        this.cost = this.stuffingValues.COST;
+    };
+    Drink.prototype.calculateCalories = function () {
+        this.calories = this.stuffingValues.CALORIES;
+    };
+    Drink.prototype.chooseDrinkType = function (drink) {
+        if (this.stuffing === drink) {
+            return console.log(drink + " is already set.");
+        }
+        _super.prototype.chooseStuffing.call(this, drink);
+        switch (this.stuffing) {
+            case Drink.DRINK_TYPES.COLA.TYPE:
+                this.stuffingValues = Drink.DRINK_TYPES.COLA;
+                break;
+            case Drink.DRINK_TYPES.COFFEE.TYPE:
+                this.stuffingValues = Drink.DRINK_TYPES.COFFEE;
+                break;
+            default:
+                console.log("Sorry, we have no such drink.");
+                break;
+        }
+        this.calculateCost();
+        this.calculateCalories();
+    };
+    Drink.DRINK_TYPES = {
+        COLA: { TYPE: 'Cola', COST: 50, CALORIES: 40 },
+        COFFEE: { TYPE: 'Coffee', COST: 80, CALORIES: 20 }
+    };
     return Drink;
 })(Food);
 var order1 = new Order('Tigran');
@@ -224,22 +257,16 @@ salad1.chooseSaladType('Caesar');
 salad1.chooseWeight(89);
 var salad2 = new Salad('Tasty salad');
 salad2.chooseSaladType('Olivier');
-salad2.chooseWeight(89);
+salad2.chooseWeight(150);
+var drink1 = new Drink('Precious drink');
+drink1.chooseDrinkType('Coffee');
+var drink2 = new Drink('Fascinating drink');
+drink2.chooseDrinkType('Cola');
 // You might use 'npm run result' to automatically compile index.ts and run index.js
-console.log(salad1.getFullFoodName(), salad1.getCost() + ' tugrics.', salad1.getCalories() + ' calories.');
-console.log(salad2.getFullFoodName(), salad2.getCost() + ' tugrics.', salad2.getCalories() + ' calories.');
-// console.log(
-//   order1.addToOrder(burger1, burger2),
-//   order1.getTotalCost(),
-//   order1.getTotalCalories()
-// );
-// console.log(
-//   order1.deleteFromOrder(burger1.getFullFoodName()),
-//   order1.getTotalCost(),
-//   order1.getTotalCalories()
-// );
-// console.log(
-//   order1.deleteFromOrder(burger2.getFullFoodName()),
-//   order1.getTotalCost(),
-//   order1.getTotalCalories()
-// );
+// console.log(drink1.getFullFoodName(), drink1.getCost()+' tugrics.', drink1.getCalories()+' calories.');
+// console.log(drink2.getFullFoodName(), drink2.getCost()+' tugrics.', drink2.getCalories()+' calories.');
+// console.log(salad1.getFullFoodName(), salad1.getCost()+ ' tugrics.', salad1.getCalories()+ ' calories.');
+// console.log(salad2.getFullFoodName(), salad2.getCost()+ ' tugrics.', salad2.getCalories()+ ' calories.');
+console.log(order1.addToOrder(burger1, burger2, salad1, salad2, drink1, drink2), order1.getTotalCost(), order1.getTotalCalories());
+console.log(order1.deleteFromOrder(burger1.getFullFoodName()), order1.getTotalCost(), order1.getTotalCalories());
+console.log(order1.deleteFromOrder(salad2.getFullFoodName()), order1.getTotalCost(), order1.getTotalCalories());

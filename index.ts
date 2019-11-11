@@ -2,6 +2,23 @@ type tugric = number;
 type calories = number;
 type foodItem = Burger | Salad | Drink;
 
+interface IOrder {
+  getTotalCost(): string;
+  getTotalCalories(): string;
+  getOrderList(): Array<foodItem>;
+  addToOrder(...items: Array<foodItem>): string;
+  deleteFromOrder(fullFoodName: string): string;
+}
+
+interface IFood {
+  chooseSize(size: string | number): void;
+  chooseStuffing(stuffing: string): void;
+  getCost(): tugric;
+  getCalories(): calories;
+  getFoodName(): string;
+  getFullFoodName(): string;
+}
+
 interface TypeCostCalories {
   TYPE: string;
   COST: tugric;
@@ -24,7 +41,12 @@ interface SaladTypes {
   OLIVIER: TypeCostCalories
 }
 
-class Order {
+interface DrinkTypes {
+  COLA: TypeCostCalories,
+  COFFEE: TypeCostCalories
+}
+
+class Order implements IOrder {
   protected orderOwner: string;
   protected orderList: Array<foodItem>;
   protected totalCost: tugric;
@@ -83,7 +105,7 @@ class Order {
   }
 }
 
-class Food {
+class Food implements IFood {
   protected stuffingValues: TypeCostCalories;
   protected sizeValues: TypeCostCalories;
   protected foodName: string;
@@ -116,6 +138,9 @@ class Food {
     if(typeof this.size == 'string') {
       this.fullFoodName = `${this.foodName || '[Choose item]'} with ${this
         .stuffing || '[Choose item]'} of ${this.size || '[Choose item]'} size`;
+    } else if(typeof this.stuffing == 'string') {
+      this.fullFoodName = `${this.foodName || '[Choose item]'} of type ${this
+        .stuffing || '[Choose item]'}`;
     } else if(typeof this.size == 'number') {
       this.fullFoodName = `${this.foodName || '[Choose item]'} of type ${this.stuffing || '[Choose item]'}. ${this.size || '[Choose amount]'} gramms.`;
     }
@@ -258,7 +283,40 @@ class Salad extends Food {
   }
 
 }
-class Drink extends Food {}
+class Drink extends Food {
+  static DRINK_TYPES: DrinkTypes = {
+    COLA: { TYPE: 'Cola', COST: 50, CALORIES: 40 },
+    COFFEE: { TYPE: 'Coffee', COST: 80, CALORIES: 20 }
+  };
+
+  private calculateCost(): void {
+    this.cost = this.stuffingValues.COST;
+  }
+
+  private calculateCalories(): void {
+    this.calories = this.stuffingValues.CALORIES;
+  }
+
+  chooseDrinkType(drink: string): void {
+    if (this.stuffing === drink) {
+      return console.log(`${drink} is already set.`);
+    }
+    super.chooseStuffing(drink);
+    switch (this.stuffing) {
+      case Drink.DRINK_TYPES.COLA.TYPE:
+        this.stuffingValues = Drink.DRINK_TYPES.COLA;
+        break;
+      case Drink.DRINK_TYPES.COFFEE.TYPE:
+        this.stuffingValues = Drink.DRINK_TYPES.COFFEE;
+        break;
+      default:
+        console.log(`Sorry, we have no such drink.`);
+        break;
+    }
+    this.calculateCost();
+    this.calculateCalories();
+  }
+}
 
 const order1 = new Order('Tigran');
 
@@ -276,25 +334,34 @@ salad1.chooseWeight(89);
 
 const salad2 = new Salad('Tasty salad');
 salad2.chooseSaladType('Olivier');
-salad2.chooseWeight(89);
+salad2.chooseWeight(150);
+
+const drink1 = new Drink('Precious drink');
+drink1.chooseDrinkType('Coffee');
+
+const drink2 = new Drink('Fascinating drink')
+drink2.chooseDrinkType('Cola');
 
 // You might use 'npm run result' to automatically compile index.ts and run index.js
 
-console.log(salad1.getFullFoodName(), salad1.getCost()+ ' tugrics.', salad1.getCalories()+ ' calories.');
-console.log(salad2.getFullFoodName(), salad2.getCost()+ ' tugrics.', salad2.getCalories()+ ' calories.');
+// console.log(drink1.getFullFoodName(), drink1.getCost()+' tugrics.', drink1.getCalories()+' calories.');
+// console.log(drink2.getFullFoodName(), drink2.getCost()+' tugrics.', drink2.getCalories()+' calories.');
 
-// console.log(
-//   order1.addToOrder(burger1, burger2),
-//   order1.getTotalCost(),
-//   order1.getTotalCalories()
-// );
-// console.log(
-//   order1.deleteFromOrder(burger1.getFullFoodName()),
-//   order1.getTotalCost(),
-//   order1.getTotalCalories()
-// );
-// console.log(
-//   order1.deleteFromOrder(burger2.getFullFoodName()),
-//   order1.getTotalCost(),
-//   order1.getTotalCalories()
-// );
+// console.log(salad1.getFullFoodName(), salad1.getCost()+ ' tugrics.', salad1.getCalories()+ ' calories.');
+// console.log(salad2.getFullFoodName(), salad2.getCost()+ ' tugrics.', salad2.getCalories()+ ' calories.');
+
+console.log(
+  order1.addToOrder(burger1, burger2, salad1, salad2, drink1, drink2),
+  order1.getTotalCost(),
+  order1.getTotalCalories()
+);
+console.log(
+  order1.deleteFromOrder(burger1.getFullFoodName()),
+  order1.getTotalCost(),
+  order1.getTotalCalories()
+);
+console.log(
+  order1.deleteFromOrder(salad2.getFullFoodName()),
+  order1.getTotalCost(),
+  order1.getTotalCalories()
+);
