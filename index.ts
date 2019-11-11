@@ -149,12 +149,12 @@ class Food {
 }
 
 class Burger extends Food {
-  protected HAMBURGER_SIZES: HamburgerSizes = {
+  static HAMBURGER_SIZES: HamburgerSizes = {
     SMALL: { TYPE: 'Small', COST: 50, CALORIES: 20 },
     BIG: { TYPE: 'Big', COST: 100, CALORIES: 40 }
   };
 
-  protected HAMBURGER_STUFFING: HamburgerStuffing = {
+  static HAMBURGER_STUFFING: HamburgerStuffing = {
     CHEESE: { TYPE: 'Cheese', COST: 10, CALORIES: 20 },
     SALAD: { TYPE: 'Salad', COST: 20, CALORIES: 5 },
     POTATO: { TYPE: 'Potato', COST: 15, CALORIES: 10 }
@@ -174,11 +174,11 @@ class Burger extends Food {
     }
     super.chooseSize(type);
     switch (this.size) {
-      case this.HAMBURGER_SIZES.SMALL.TYPE:
-        this.sizeValues = this.HAMBURGER_SIZES.SMALL;
+      case Burger.HAMBURGER_SIZES.SMALL.TYPE:
+        this.sizeValues = Burger.HAMBURGER_SIZES.SMALL;
         break;
-      case this.HAMBURGER_SIZES.BIG.TYPE:
-        this.sizeValues = this.HAMBURGER_SIZES.BIG;
+      case Burger.HAMBURGER_SIZES.BIG.TYPE:
+        this.sizeValues = Burger.HAMBURGER_SIZES.BIG;
         break;
       default:
         console.log(`Sorry, we have no such sizes.`);
@@ -194,14 +194,14 @@ class Burger extends Food {
     }
     super.chooseStuffing(type);
     switch (this.stuffing) {
-      case this.HAMBURGER_STUFFING.CHEESE.TYPE:
-        this.stuffingValues = this.HAMBURGER_STUFFING.CHEESE;
+      case Burger.HAMBURGER_STUFFING.CHEESE.TYPE:
+        this.stuffingValues = Burger.HAMBURGER_STUFFING.CHEESE;
         break;
-      case this.HAMBURGER_STUFFING.POTATO.TYPE:
-        this.stuffingValues = this.HAMBURGER_STUFFING.POTATO;
+      case Burger.HAMBURGER_STUFFING.POTATO.TYPE:
+        this.stuffingValues = Burger.HAMBURGER_STUFFING.POTATO;
         break;
-      case this.HAMBURGER_STUFFING.SALAD.TYPE:
-        this.stuffingValues = this.HAMBURGER_STUFFING.SALAD;
+      case Burger.HAMBURGER_STUFFING.SALAD.TYPE:
+        this.stuffingValues = Burger.HAMBURGER_STUFFING.SALAD;
         break;
       default:
         console.log(`Sorry, we have no such stuffing.`);
@@ -214,7 +214,7 @@ class Burger extends Food {
 
 // To-Do
 class Salad extends Food {
-  protected SALAD_TYPES: SaladTypes = {
+  static SALAD_TYPES: SaladTypes = {
     CAESAR: {TYPE: 'Caesar', COST: 100, CALORIES: 20},
     OLIVIER: {TYPE: 'Olivier', COST: 50, CALORIES: 80}
   };
@@ -238,11 +238,11 @@ class Salad extends Food {
     }
     super.chooseStuffing(salad);
     switch (this.stuffing) {
-      case this.SALAD_TYPES.CAESAR.TYPE:
-        this.stuffingValues = this.SALAD_TYPES.CAESAR;
+      case Salad.SALAD_TYPES.CAESAR.TYPE:
+        this.stuffingValues = Salad.SALAD_TYPES.CAESAR;
         break;
-      case this.SALAD_TYPES.OLIVIER.TYPE:
-        this.stuffingValues = this.SALAD_TYPES.OLIVIER;
+      case Salad.SALAD_TYPES.OLIVIER.TYPE:
+        this.stuffingValues = Salad.SALAD_TYPES.OLIVIER;
         break;
       default:
         console.log(`Sorry, we have no such stuffing.`);
