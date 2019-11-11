@@ -19,6 +19,11 @@ interface HamburgerStuffing {
   POTATO: TypeCostCalories;
 }
 
+interface SaladTypes {
+  CAESAR: TypeCostCalories,
+  OLIVIER: TypeCostCalories
+}
+
 class Order {
   protected orderOwner: string;
   protected orderList: Array<foodItem>;
@@ -55,7 +60,7 @@ class Order {
 
   addToOrder(...items: Array<foodItem>): string {
     this.orderList = [...this.orderList, ...items];
-    return `${[...items.map((item: foodItem) => item.foodName)].join(', ')} ${
+    return `${[...items.map((item: foodItem) => item.getFoodName())].join(', ')} ${
       items.length > 1 ? 'were' : 'was'
     } added to your order!`;
   }
@@ -64,15 +69,15 @@ class Order {
     this.totalCost =
       this.totalCost -
       this.orderList
-        .filter((item: foodItem) => item.fullFoodName == fullFoodName)[0]
+        .filter((item: foodItem) => item.getFullFoodName() == fullFoodName)[0]
         .getCost();
     this.totalCalories =
       this.totalCost -
       this.orderList
-        .filter((item: foodItem) => item.fullFoodName == fullFoodName)[0]
+        .filter((item: foodItem) => item.getFullFoodName() == fullFoodName)[0]
         .getCalories();
     this.orderList = this.orderList.filter(
-      (item: foodItem) => item.fullFoodName != fullFoodName
+      (item: foodItem) => item.getFullFoodName() != fullFoodName
     );
     return `${fullFoodName} was deleted from your order!`;
   }
@@ -81,10 +86,10 @@ class Order {
 class Food {
   protected stuffingValues: TypeCostCalories;
   protected sizeValues: TypeCostCalories;
-  foodName: string;
-  fullFoodName: string;
+  protected foodName: string;
+  protected fullFoodName: string;
   protected stuffing: string;
-  protected size: string;
+  protected size: string | number;
   protected cost: tugric;
   protected calories: calories;
 
@@ -108,11 +113,15 @@ class Food {
   }
 
   private setFullFoodName(): void {
-    this.fullFoodName = `${this.foodName || '[Choose item]'} with ${this
-      .stuffing || '[Choose item]'} of ${this.size || '[Choose item]'} size`;
+    if(typeof this.size == 'string') {
+      this.fullFoodName = `${this.foodName || '[Choose item]'} with ${this
+        .stuffing || '[Choose item]'} of ${this.size || '[Choose item]'} size`;
+    } else if(typeof this.size == 'number') {
+      this.fullFoodName = `${this.foodName || '[Choose item]'} of type ${this.stuffing || '[Choose item]'}. ${this.size || '[Choose amount]'} gramms.`;
+    }
   }
 
-  chooseSize(size: string): void {
+  chooseSize(size: string | number): void {
     this.size = size;
     this.setFullFoodName();
   }
@@ -126,8 +135,16 @@ class Food {
     return this.cost;
   }
 
-  getCalories(): tugric {
+  getCalories(): calories {
     return this.calories;
+  }
+
+  getFoodName(): string {
+    return this.foodName;
+  }
+
+  getFullFoodName(): string {
+    return this.fullFoodName;
   }
 }
 
@@ -142,10 +159,6 @@ class Burger extends Food {
     SALAD: { TYPE: 'Salad', COST: 20, CALORIES: 5 },
     POTATO: { TYPE: 'Potato', COST: 15, CALORIES: 10 }
   };
-
-  constructor(foodName: string) {
-    super(foodName);
-  }
 
   private calculateCost(): void {
     this.cost = this.sizeValues.COST + this.stuffingValues.COST;
@@ -200,7 +213,51 @@ class Burger extends Food {
 }
 
 // To-Do
-class Salad extends Food {}
+class Salad extends Food {
+  protected SALAD_TYPES: SaladTypes = {
+    CAESAR: {TYPE: 'Caesar', COST: 100, CALORIES: 20},
+    OLIVIER: {TYPE: 'Olivier', COST: 50, CALORIES: 80}
+  };
+
+  constructor(foodName: string) {
+    super(foodName);
+    this.size = 0;
+  }
+  
+  private calculateCost(grammAmount: number): void {
+    this.cost = Number(((this.stuffingValues.COST * grammAmount) / 100).toFixed());
+  }
+
+  private calculateCalories(grammAmount: number): void {
+    this.calories = Number(((this.stuffingValues.CALORIES * grammAmount) / 100).toFixed());
+  }
+
+  chooseSaladType(salad: string): void {
+    if (this.stuffing === salad) {
+      console.log(`${salad} is already set.`);
+    }
+    super.chooseStuffing(salad);
+    switch (this.stuffing) {
+      case this.SALAD_TYPES.CAESAR.TYPE:
+        this.stuffingValues = this.SALAD_TYPES.CAESAR;
+        break;
+      case this.SALAD_TYPES.OLIVIER.TYPE:
+        this.stuffingValues = this.SALAD_TYPES.OLIVIER;
+        break;
+      default:
+        console.log(`Sorry, we have no such stuffing.`);
+        break;
+    }
+  }
+
+  chooseWeight(grammAmount: number): string {
+    if(grammAmount <= 0) return 'Type a positive amount of gramms';
+    super.chooseSize(grammAmount);
+    this.calculateCost(grammAmount);
+    this.calculateCalories(grammAmount);
+  }
+
+}
 class Drink extends Food {}
 
 const order1 = new Order('Tigran');
@@ -213,20 +270,31 @@ const burger2 = new Burger('Freshburger');
 burger2.chooseSize('Big');
 burger2.chooseStuffing('Salad');
 
+const salad1 = new Salad('Delicios salad');
+salad1.chooseSaladType('Caesar');
+salad1.chooseWeight(89);
+
+const salad2 = new Salad('Tasty salad');
+salad2.chooseSaladType('Olivier');
+salad2.chooseWeight(89);
+
 // You might use 'npm run result' to automatically compile index.ts and run index.js
 
-console.log(
-  order1.addToOrder(burger1, burger2),
-  order1.getTotalCost(),
-  order1.getTotalCalories()
-);
-console.log(
-  order1.deleteFromOrder(burger1.fullFoodName),
-  order1.getTotalCost(),
-  order1.getTotalCalories()
-);
-console.log(
-  order1.deleteFromOrder(burger2.fullFoodName),
-  order1.getTotalCost(),
-  order1.getTotalCalories()
-);
+console.log(salad1.getFullFoodName(), salad1.getCost()+ ' tugrics.', salad1.getCalories()+ ' calories.');
+console.log(salad2.getFullFoodName(), salad2.getCost()+ ' tugrics.', salad2.getCalories()+ ' calories.');
+
+// console.log(
+//   order1.addToOrder(burger1, burger2),
+//   order1.getTotalCost(),
+//   order1.getTotalCalories()
+// );
+// console.log(
+//   order1.deleteFromOrder(burger1.getFullFoodName()),
+//   order1.getTotalCost(),
+//   order1.getTotalCalories()
+// );
+// console.log(
+//   order1.deleteFromOrder(burger2.getFullFoodName()),
+//   order1.getTotalCost(),
+//   order1.getTotalCalories()
+// );

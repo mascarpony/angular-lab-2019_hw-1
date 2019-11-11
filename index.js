@@ -31,20 +31,20 @@ var Order = (function () {
             items[_i - 0] = arguments[_i];
         }
         this.orderList = this.orderList.concat(items);
-        return items.map(function (item) { return item.foodName; }).slice().join(', ') + " " + (items.length > 1 ? 'were' : 'was') + " added to your order!";
+        return items.map(function (item) { return item.getFoodName(); }).slice().join(', ') + " " + (items.length > 1 ? 'were' : 'was') + " added to your order!";
     };
     Order.prototype.deleteFromOrder = function (fullFoodName) {
         this.totalCost =
             this.totalCost -
                 this.orderList
-                    .filter(function (item) { return item.fullFoodName == fullFoodName; })[0]
+                    .filter(function (item) { return item.getFullFoodName() == fullFoodName; })[0]
                     .getCost();
         this.totalCalories =
             this.totalCost -
                 this.orderList
-                    .filter(function (item) { return item.fullFoodName == fullFoodName; })[0]
+                    .filter(function (item) { return item.getFullFoodName() == fullFoodName; })[0]
                     .getCalories();
-        this.orderList = this.orderList.filter(function (item) { return item.fullFoodName != fullFoodName; });
+        this.orderList = this.orderList.filter(function (item) { return item.getFullFoodName() != fullFoodName; });
         return fullFoodName + " was deleted from your order!";
     };
     return Order;
@@ -69,8 +69,13 @@ var Food = (function () {
         this.calories = 0;
     }
     Food.prototype.setFullFoodName = function () {
-        this.fullFoodName = (this.foodName || '[Choose item]') + " with " + (this
-            .stuffing || '[Choose item]') + " of " + (this.size || '[Choose item]') + " size";
+        if (typeof this.size == 'string') {
+            this.fullFoodName = (this.foodName || '[Choose item]') + " with " + (this
+                .stuffing || '[Choose item]') + " of " + (this.size || '[Choose item]') + " size";
+        }
+        else if (typeof this.size == 'number') {
+            this.fullFoodName = (this.foodName || '[Choose item]') + " of type " + (this.stuffing || '[Choose item]') + ". " + (this.size || '[Choose amount]') + " gramms.";
+        }
     };
     Food.prototype.chooseSize = function (size) {
         this.size = size;
@@ -86,12 +91,18 @@ var Food = (function () {
     Food.prototype.getCalories = function () {
         return this.calories;
     };
+    Food.prototype.getFoodName = function () {
+        return this.foodName;
+    };
+    Food.prototype.getFullFoodName = function () {
+        return this.fullFoodName;
+    };
     return Food;
 })();
 var Burger = (function (_super) {
     __extends(Burger, _super);
-    function Burger(foodName) {
-        _super.call(this, foodName);
+    function Burger() {
+        _super.apply(this, arguments);
         this.HAMBURGER_SIZES = {
             SMALL: { TYPE: 'Small', COST: 50, CALORIES: 20 },
             BIG: { TYPE: 'Big', COST: 100, CALORIES: 40 }
@@ -151,11 +162,47 @@ var Burger = (function (_super) {
     };
     return Burger;
 })(Food);
+// To-Do
 var Salad = (function (_super) {
     __extends(Salad, _super);
-    function Salad() {
-        _super.apply(this, arguments);
+    function Salad(foodName) {
+        _super.call(this, foodName);
+        this.SALAD_TYPES = {
+            CAESAR: { TYPE: 'Caesar', COST: 100, CALORIES: 20 },
+            OLIVIER: { TYPE: 'Olivier', COST: 50, CALORIES: 80 }
+        };
+        this.size = 0;
     }
+    Salad.prototype.calculateCost = function (grammAmount) {
+        this.cost = Number(((this.stuffingValues.COST * grammAmount) / 100).toFixed());
+    };
+    Salad.prototype.calculateCalories = function (grammAmount) {
+        this.calories = Number(((this.stuffingValues.CALORIES * grammAmount) / 100).toFixed());
+    };
+    Salad.prototype.chooseSaladType = function (salad) {
+        if (this.stuffing === salad) {
+            console.log(salad + " is already set.");
+        }
+        _super.prototype.chooseStuffing.call(this, salad);
+        switch (this.stuffing) {
+            case this.SALAD_TYPES.CAESAR.TYPE:
+                this.stuffingValues = this.SALAD_TYPES.CAESAR;
+                break;
+            case this.SALAD_TYPES.OLIVIER.TYPE:
+                this.stuffingValues = this.SALAD_TYPES.OLIVIER;
+                break;
+            default:
+                console.log("Sorry, we have no such stuffing.");
+                break;
+        }
+    };
+    Salad.prototype.chooseWeight = function (grammAmount) {
+        if (grammAmount <= 0)
+            return 'Type a positive amount of gramms';
+        _super.prototype.chooseSize.call(this, grammAmount);
+        this.calculateCost(grammAmount);
+        this.calculateCalories(grammAmount);
+    };
     return Salad;
 })(Food);
 var Drink = (function (_super) {
@@ -172,7 +219,27 @@ burger1.chooseStuffing('Potato');
 var burger2 = new Burger('Freshburger');
 burger2.chooseSize('Big');
 burger2.chooseStuffing('Salad');
+var salad1 = new Salad('Delicios salad');
+salad1.chooseSaladType('Caesar');
+salad1.chooseWeight(89);
+var salad2 = new Salad('Tasty salad');
+salad2.chooseSaladType('Olivier');
+salad2.chooseWeight(89);
 // You might use 'npm run result' to automatically compile index.ts and run index.js
-console.log(order1.addToOrder(burger1, burger2), order1.getTotalCost(), order1.getTotalCalories());
-console.log(order1.deleteFromOrder(burger1.fullFoodName), order1.getTotalCost(), order1.getTotalCalories());
-console.log(order1.deleteFromOrder(burger2.fullFoodName), order1.getTotalCost(), order1.getTotalCalories());
+console.log(salad1.getFullFoodName(), salad1.getCost() + ' tugrics.', salad1.getCalories() + ' calories.');
+console.log(salad2.getFullFoodName(), salad2.getCost() + ' tugrics.', salad2.getCalories() + ' calories.');
+// console.log(
+//   order1.addToOrder(burger1, burger2),
+//   order1.getTotalCost(),
+//   order1.getTotalCalories()
+// );
+// console.log(
+//   order1.deleteFromOrder(burger1.getFullFoodName()),
+//   order1.getTotalCost(),
+//   order1.getTotalCalories()
+// );
+// console.log(
+//   order1.deleteFromOrder(burger2.getFullFoodName()),
+//   order1.getTotalCost(),
+//   order1.getTotalCalories()
+// );
