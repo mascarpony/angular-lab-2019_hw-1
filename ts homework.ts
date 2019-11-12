@@ -169,6 +169,3 @@ class Salad implements Food {
     }
   }
 }
-
-let myOrder = new Order();
-myOrder.show();
