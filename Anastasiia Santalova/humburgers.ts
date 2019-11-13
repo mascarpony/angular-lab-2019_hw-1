@@ -1,5 +1,10 @@
 "use strict"
 
+interface FoodParamsArray {
+    reduce(arg0: (acc: number, value: number) => number, arg1: number): number;
+    readonly [index: number]: number
+}
+
 /**
 * * * * * * * ORDER * * * * * * * 
 */
@@ -67,12 +72,12 @@ function Food(price: number, calories: number): void {
 * * * * * * * CLASS HAMBURGER * * * * * * * 
 */
 
-function Hamburger(size: Array<number>, stuffing: Array<any>): void {
+function Hamburger(size: FoodParamsArray, stuffing): void {
 
     this.size = size;
     this.stuffing = stuffing;
 
-    let hamPrice, hamCalories, priceOfStuffing, caloriesOfStuffing;
+    let hamPrice: number, hamCalories: number, priceOfStuffing: number, caloriesOfStuffing: number;
 
     if (stuffing[0][0]) {
 
@@ -102,11 +107,11 @@ function Hamburger(size: Array<number>, stuffing: Array<any>): void {
 /**
 * Sizes and types of stuffing 
 */
-Hamburger.SIZE_SMALL = [50, 20];
-Hamburger.SIZE_LARGE = [100, 40];
-Hamburger.STUFFING_CHEESE = [10, 20];
-Hamburger.STUFFING_SALAD = [20, 5];
-Hamburger.STUFFING_POTATO = [15, 10];
+const sizeSmall: FoodParamsArray = Hamburger.SIZE_SMALL = [50, 20];
+const sizeLarge: FoodParamsArray = Hamburger.SIZE_LARGE = [100, 40];
+const stuffingCheese: FoodParamsArray = Hamburger.STUFFING_CHEESE = [10, 20];
+const stuffingSalad: FoodParamsArray = Hamburger.STUFFING_SALAD = [20, 5];
+const stuffingPotato: FoodParamsArray = Hamburger.STUFFING_POTATO = [15, 10];
 
 Hamburger.prototype = Object.create(Food.prototype);
 
@@ -115,7 +120,7 @@ Hamburger.prototype = Object.create(Food.prototype);
 * * * * * * * CLASS SALAD * * * * * * *
 */
 
-function Salad(name: Array<number>): void {
+function Salad(name: FoodParamsArray): void {
     
     this.name = name;
 
@@ -130,15 +135,15 @@ function Salad(name: Array<number>): void {
 /**
 * Types of salads 
 */
-Salad.CAESAR = [100, 20];
-Salad.RUSSIAN_SALAD = [50, 80];
+const caesarSalad: FoodParamsArray = Salad.CAESAR = [100, 20];
+const russianSalad: FoodParamsArray = Salad.RUSSIAN_SALAD = [50, 80];
 
 
 /**
 * * * * * * * CLASS DRINK * * * * * * * 
 */
 
-function Drink(type: Array<number>): void {
+function Drink(type: FoodParamsArray): void {
 
     this.type = type;
 
@@ -153,8 +158,8 @@ function Drink(type: Array<number>): void {
 /** 
 * Types of drinks 
 */
-Drink.COLA = [50, 40];
-Drink.COFFEE = [80, 20];
+const cola: FoodParamsArray = Drink.COLA = [50, 40];
+const coffee: FoodParamsArray = Drink.COFFEE = [80, 20];
 
 
 
@@ -165,11 +170,11 @@ Drink.COFFEE = [80, 20];
 // let food = new Food();
 let order = new Order();
 
-let H1 = new Hamburger (Hamburger.SIZE_SMALL, [Hamburger.STUFFING_CHEESE, Hamburger.STUFFING_POTATO]);
-let H2 = new Hamburger (Hamburger.SIZE_LARGE, Hamburger.STUFFING_SALAD);
-let drink = new Drink(Drink.COLA);
-let salad = new Salad(Salad.RUSSIAN_SALAD);
-let salad1 = new Salad(Salad.CAESAR);
+let H1 = new Hamburger (sizeSmall, [stuffingCheese, stuffingPotato]);
+let H2 = new Hamburger (sizeLarge, stuffingSalad);
+let drink = new Drink(cola);
+let salad = new Salad(russianSalad);
+let salad1 = new Salad(caesarSalad);
 
 order.acceptProduct(H1);
 order.acceptProduct(H2);
