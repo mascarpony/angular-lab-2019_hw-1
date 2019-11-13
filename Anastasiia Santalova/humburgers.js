@@ -73,11 +73,11 @@ function Hamburger(size, stuffing) {
 /**
 * Sizes and types of stuffing
 */
-Hamburger.SIZE_SMALL = [50, 20];
-Hamburger.SIZE_LARGE = [100, 40];
-Hamburger.STUFFING_CHEESE = [10, 20];
-Hamburger.STUFFING_SALAD = [20, 5];
-Hamburger.STUFFING_POTATO = [15, 10];
+var sizeSmall = Hamburger.SIZE_SMALL = [50, 20];
+var sizeLarge = Hamburger.SIZE_LARGE = [100, 40];
+var stuffingCheese = Hamburger.STUFFING_CHEESE = [10, 20];
+var stuffingSalad = Hamburger.STUFFING_SALAD = [20, 5];
+var stuffingPotato = Hamburger.STUFFING_POTATO = [15, 10];
 Hamburger.prototype = Object.create(Food.prototype);
 /**
 * * * * * * * CLASS SALAD * * * * * * *
@@ -92,8 +92,8 @@ function Salad(name) {
 /**
 * Types of salads
 */
-Salad.CAESAR = [100, 20];
-Salad.RUSSIAN_SALAD = [50, 80];
+var caesarSalad = Salad.CAESAR = [100, 20];
+var russianSalad = Salad.RUSSIAN_SALAD = [50, 80];
 /**
 * * * * * * * CLASS DRINK * * * * * * *
 */
@@ -107,16 +107,16 @@ function Drink(type) {
 /**
 * Types of drinks
 */
-Drink.COLA = [50, 40];
-Drink.COFFEE = [80, 20];
+var cola = Drink.COLA = [50, 40];
+var coffee = Drink.COFFEE = [80, 20];
 //*********************************************************************************//
 // let food = new Food();
 var order = new Order();
-var H1 = new Hamburger(Hamburger.SIZE_SMALL, [Hamburger.STUFFING_CHEESE, Hamburger.STUFFING_POTATO]);
-var H2 = new Hamburger(Hamburger.SIZE_LARGE, Hamburger.STUFFING_SALAD);
-var drink = new Drink(Drink.COLA);
-var salad = new Salad(Salad.RUSSIAN_SALAD);
-var salad1 = new Salad(Salad.CAESAR);
+var H1 = new Hamburger(sizeSmall, [stuffingCheese, stuffingPotato]);
+var H2 = new Hamburger(sizeLarge, stuffingSalad);
+var drink = new Drink(cola);
+var salad = new Salad(russianSalad);
+var salad1 = new Salad(caesarSalad);
 order.acceptProduct(H1);
 order.acceptProduct(H2);
 order.acceptProduct(drink);
