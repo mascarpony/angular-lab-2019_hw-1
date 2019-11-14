@@ -1,0 +1,23 @@
+{
+  "name": "angular-lab-2019_hw-1",
+  "version": "1.0.0",
+  "description": "angular-lab-2019_hw-1",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js",
+    "tojs": "npx tsc index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eroslyakov/angular-lab-2019_hw-1.git"
+  },
+  "author": "Evgenii Rosliakov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eroslyakov/angular-lab-2019_hw-1/issues"
+  },
+  "homepage": "https://github.com/eroslyakov/angular-lab-2019_hw-1#readme",
+  "devDependencies": {
+    "typescript": "^3.7.2"
+  }
+}
