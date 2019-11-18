@@ -1,16 +1,13 @@
 const MESSAGE_PAID = 'Your order is already paid';
 
-interface IItem {
-    title: string;
-    price: number;
-    calories: number;
-    additives?: IAdditive[];
-}
-
 interface IAdditive {
     title: string;
     price: number;
     calories: number;
+}
+
+interface IItem extends IAdditive {
+    additives?: IAdditive[];
 }
 
 interface ExtendedIItem extends IItem {
@@ -118,7 +115,7 @@ class Drink extends Item {
 }
 
 interface IOrder {
-    items: IItem[];
+    items: ExtendedIItem[];
     isPaid: boolean;
 }
 
@@ -131,7 +128,7 @@ class Order implements IOrder {
         this.isPaid = false;
     }
 
-    addToOrder(newItem: ExtendedIItem): IItem[] | void {
+    addToOrder(newItem: ExtendedIItem): ExtendedIItem[] | void {
         if (!this.isPaid) {
             this.items.push(newItem);
             return this.items;
@@ -140,7 +137,7 @@ class Order implements IOrder {
         }
     }
 
-    deleteFromOrder(delId: number): IItem[] | void {
+    deleteFromOrder(delId: number): ExtendedIItem[] | void {
         if (!this.isPaid) {
             return this.items = this.items.filter(item => item.id !== delId);
         } else {
