@@ -7,23 +7,44 @@ interface Food {
   setPriceAndCalories(): void;
 }
 
-const HamburgerSize = {
+enum HamburgerStuffing {
+  SALAD = 'salad',
+  POTATO = 'potato',
+  CHEESE = 'cheese'
+}
+
+enum HamburgerSize {
+  SMALL = 'small',
+  LARGE = 'large'
+}
+
+enum DrinkName {
+  COLA = 'cola',
+  COFFEE = 'coffee'
+}
+
+enum SaladName {
+  OLIVIER = 'olivier',
+  CAESAR = 'caesar'
+}
+
+const HamburgerSizeChar = {
   SMALL: { price: 50, calories: 20 },
   LARGE: { price: 100, calories: 40 }
 };
 
-const HamburgerStuffing = {
+const HamburgerStuffingChar = {
   CHEESE: { price: 10, calories: 20 },
   SALAD: { price: 20, calories: 5 },
   POTATO: { price: 15, calories: 10 }
 };
 
-const DrinkName = {
+const DrinkNameChar = {
   COLA: { price: 50, callories: 40 },
   COFFEE: { price: 80, callories: 20 }
 };
 
-const SaladName = {
+const SaladNameChar = {
   OLIVIER: { price: 50, callories: 80 },
   CAESAR: { price: 100, callories: 20 }
 };
@@ -33,13 +54,13 @@ class Order {
   totalPrice: number = 0;
   totalCalories: number = 0;
 
-  constructor() {
-    if (arguments.length) {
-      for (let i = 0; i < arguments.length; i++) {
-        this.items.push(arguments[i]);
-        this.totalCalories += arguments[i].callories;
-        this.totalPrice += arguments[i].price;
-      }
+  constructor(...items: Food[]) {
+    if (items.length) {
+      items.forEach((element: Food) => {
+        this.items.push(element);
+        this.totalCalories += element.calories;
+        this.totalPrice += element.price;
+      });
     }
   }
 
@@ -75,55 +96,55 @@ class Order {
 
   show(): void {
     if (this.items.length) {
-      console.log("Your order:");
+      console.log('Your order:');
       this.items.forEach(elem => {
         if (elem.stuffing) {
           console.log(`${elem.size} ${elem.name} with ${elem.stuffing}`);
         } else console.log(elem.name);
       });
-    } else console.log("Order is empty. Add something tasty!");
+    } else console.log('Order is empty. Add something tasty!');
   }
 
   pay(): void {
     Object.freeze(this.items);
-    console.log("Your order was paid");
+    console.log('Your order was paid');
   }
 }
 
 class Hamburger implements Food {
   calories: number = 0;
   price: number = 0;
-  name: string = "Hamburger";
-  size: string;
-  stuffing: string;
+  name: string = 'Hamburger';
+  size: HamburgerSize;
+  stuffing: HamburgerStuffing;
   constructor(size: string, stuffing: string) {
-    this.size = size.toLowerCase();
-    this.stuffing = stuffing.toLowerCase();
+    this.size = HamburgerSize[size.toUpperCase()];
+    this.stuffing = HamburgerStuffing[stuffing.toUpperCase()];
     this.setPriceAndCalories();
   }
   setPriceAndCalories() {
     switch (this.size) {
-      case "small":
-        this.price = HamburgerSize.SMALL.price;
-        this.calories = HamburgerSize.SMALL.calories;
+      case 'small':
+        this.price = HamburgerSizeChar.SMALL.price;
+        this.calories = HamburgerSizeChar.SMALL.calories;
         break;
-      case "large":
-        this.price = HamburgerSize.LARGE.price;
-        this.calories = HamburgerSize.LARGE.calories;
+      case 'large':
+        this.price = HamburgerSizeChar.LARGE.price;
+        this.calories = HamburgerSizeChar.LARGE.calories;
         break;
     }
-    switch (this.stuffing.toLowerCase()) {
-      case "cheese":
-        this.price += HamburgerStuffing.CHEESE.price;
-        this.calories += HamburgerStuffing.CHEESE.calories;
+    switch (this.stuffing) {
+      case 'cheese':
+        this.price += HamburgerStuffingChar.CHEESE.price;
+        this.calories += HamburgerStuffingChar.CHEESE.calories;
         break;
-      case "salad":
-        this.price += HamburgerStuffing.SALAD.price;
-        this.calories += HamburgerStuffing.SALAD.calories;
+      case 'salad':
+        this.price += HamburgerStuffingChar.SALAD.price;
+        this.calories += HamburgerStuffingChar.SALAD.calories;
         break;
-      case "potato":
-        this.price += HamburgerStuffing.POTATO.price;
-        this.calories += HamburgerStuffing.POTATO.calories;
+      case 'potato':
+        this.price += HamburgerStuffingChar.POTATO.price;
+        this.calories += HamburgerStuffingChar.POTATO.calories;
         break;
     }
   }
@@ -132,20 +153,20 @@ class Hamburger implements Food {
 class Drink implements Food {
   calories: number = 0;
   price: number = 0;
-  name: string;
+  name: DrinkName;
   constructor(name: string) {
-    this.name = name;
+    this.name = DrinkName[name.toUpperCase()];
     this.setPriceAndCalories();
   }
 
   setPriceAndCalories() {
     switch (this.name.toLowerCase()) {
-      case "cola":
-        this.price = DrinkName.COLA.price;
-        this.calories = DrinkName.COLA.callories;
-      case "coffee":
-        this.price = DrinkName.COFFEE.price;
-        this.calories = DrinkName.COFFEE.callories;
+      case 'cola':
+        this.price = DrinkNameChar.COLA.price;
+        this.calories = DrinkNameChar.COLA.callories;
+      case 'coffee':
+        this.price = DrinkNameChar.COFFEE.price;
+        this.calories = DrinkNameChar.COFFEE.callories;
     }
   }
 }
@@ -153,19 +174,19 @@ class Drink implements Food {
 class Salad implements Food {
   calories: number = 0;
   price: number = 0;
-  name: string;
+  name: SaladName;
   constructor(name: string) {
-    this.name = name;
+    this.name = SaladName[name.toUpperCase()];
     this.setPriceAndCalories();
   }
   setPriceAndCalories() {
     switch (this.name.toLowerCase()) {
-      case "olivier":
-        this.price = SaladName.OLIVIER.price;
-        this.calories = SaladName.OLIVIER.callories;
-      case "caesar":
-        this.price = SaladName.CAESAR.price;
-        this.calories = SaladName.CAESAR.callories;
+      case 'olivier':
+        this.price = SaladNameChar.OLIVIER.price;
+        this.calories = SaladNameChar.OLIVIER.callories;
+      case 'caesar':
+        this.price = SaladNameChar.CAESAR.price;
+        this.calories = SaladNameChar.CAESAR.callories;
     }
   }
 }
